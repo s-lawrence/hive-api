@@ -15,7 +15,10 @@ import { ProjectService } from "./project.service";
 import { Project } from "./project.entity";
 import { UpdateProjectDto } from "./dto/update-project-dto";
 import { DeleteResult } from "typeorm";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
+@ApiBearerAuth()
+@ApiTags('Project')
 @UseGuards(AuthGuard())
 @Controller("project")
 export class ProjectController {

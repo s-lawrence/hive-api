@@ -11,7 +11,7 @@ import {
   ManyToMany,
   JoinTable
 } from "typeorm";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import { Account } from "../account/account.entity";
 import { Interest } from "../interest/interest.entity";
 import { Education } from "./education/education.entity";
@@ -94,6 +94,7 @@ export class User extends BaseEntity {
     experience => experience.user,
     { nullable: true, cascade: true }
   )
+  @JoinColumn()
   experience: Experience[];
 
   @Column({ nullable: true })

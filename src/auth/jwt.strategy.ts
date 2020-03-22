@@ -5,6 +5,9 @@ import { JwtPayload } from "./jwt-payload.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserRepository } from "../user/user.repository";
 import { User } from "../user/user.entity";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: "We are the priests of the temples of syrinx our great computers fill the hallowed halls"
+      secretOrKey: process.env.JWT_SECRET || "We are the priests of the temples of syrinx our great computers fill the hallowed halls"
     });
   }
 

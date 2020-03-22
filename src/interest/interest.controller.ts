@@ -15,7 +15,10 @@ import { CreateInterestDto } from "./dto/create-interest.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { UpdateInterestDto } from "./dto/update-interest.dto";
 import { DeleteResult } from "typeorm";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
+@ApiBearerAuth()
+@ApiTags('Interests')
 @UseGuards(AuthGuard())
 @Controller("interest")
 export class InterestController {

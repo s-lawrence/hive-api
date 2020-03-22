@@ -1,13 +1,14 @@
 import { Experience } from "./experience.entity";
 import { Repository, EntityRepository } from "typeorm";
 import { CreateExperienceDto } from "./dto/create-experience.dto";
-import { InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
+import {
+  InternalServerErrorException,
+  UnauthorizedException
+} from "@nestjs/common";
 import { UpdateExperienceDto } from "./dto/update-experience.dto";
-
 
 @EntityRepository(Experience)
 export class ExperienceRepository extends Repository<Experience> {
-  
   async getUserExperience(userId: string): Promise<Experience[]> {
     return await this.createQueryBuilder("experience")
       .where("experience.userId = :userId", { userId })
@@ -33,8 +34,7 @@ export class ExperienceRepository extends Repository<Experience> {
     experience.endDate = endDate;
     experience.description = description;
     try {
-      experience.save();
-      return experience;
+      return await experience.save();
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException("Error creating experience");
@@ -46,22 +46,24 @@ export class ExperienceRepository extends Repository<Experience> {
     experienceId: string,
     updateExperienceDto: UpdateExperienceDto
   ): Promise<Experience> {
-    return await this.findOne({ id: experienceId, userId }).then(async experience => {
-      for (let [key, value] of Object.entries(updateExperienceDto)) {
-        if (key === "id") {
-          throw new UnauthorizedException();
+    return await this.findOne({ id: experienceId, userId }).then(
+      async experience => {
+        for (let [key, value] of Object.entries(updateExperienceDto)) {
+          if (key === "id") {
+            throw new UnauthorizedException();
+          }
+          experience[key] = value;
         }
-        experience[key] = value;
+        try {
+          await experience.save();
+        } catch (error) {
+          console.log(error);
+          throw new InternalServerErrorException(
+            "An error occured while updating experience"
+          );
+        }
+        return experience;
       }
-      try {
-        await experience.save();
-      } catch (error) {
-        console.log(error);
-        throw new InternalServerErrorException(
-          "An error occured while updating experience"
-        );
-      }
-      return experience;
-    });
+    );
   }
 }

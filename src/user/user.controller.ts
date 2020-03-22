@@ -19,7 +19,12 @@ import { DeleteResult } from "typeorm";
 import { Experience } from "./experience/experience.entity";
 import { CreateExperienceDto } from "./experience/dto/create-experience.dto";
 import { UpdateExperienceDto } from "./experience/dto/update-experience.dto";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { CreateEducationDto } from "./education/dto/create-education.dto";
 
+
+@ApiBearerAuth()
+@ApiTags('User')
 @UseGuards(AuthGuard())
 @Controller("user")
 export class UserController {
@@ -44,6 +49,14 @@ export class UserController {
     @Body() education: Education[]
   ): Promise<User> {
     return this.userService.addUserEducation(id, education);
+  }
+
+  @Post("/:userId/education")
+  createUserEducation(
+    @Param("userId") userId: string,
+    @Body(ValidationPipe) createEducationDto: CreateEducationDto
+  ): Promise<Education> {
+    return this.userService.createUserEducation(userId, createEducationDto);
   }
 
   @Get("/:id/education")

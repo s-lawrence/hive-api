@@ -13,6 +13,7 @@ import { Experience } from "./experience/experience.entity";
 import { CreateExperienceDto } from "./experience/dto/create-experience.dto";
 import { UpdateExperienceDto } from "./experience/dto/update-experience.dto";
 import { EducationRepository } from "./education/education.repository";
+import { CreateEducationDto } from "./education/dto/create-education.dto";
 
 @Injectable()
 export class UserService {
@@ -53,6 +54,13 @@ export class UserService {
 
   async addUserEducation(id: string, education: Education[]): Promise<User> {
     return await this.userRepository.addUserEducation(id, education);
+  }
+
+  async createUserEducation(
+    userId: string,
+    createEducationDto: CreateEducationDto
+  ): Promise<Education> {
+    return this.educationRepository.createUserEducation(userId,  createEducationDto);
   }
 
   async updateUserEducationById(
@@ -132,10 +140,7 @@ export class UserService {
       });
   }
 
-  async addUserInterests(
-    userId: string,
-    interests: string[]
-  ) {
+  async addUserInterests(userId: string, interests: string[]) {
     return this.userRepository.addUserInterests(userId, interests);
   }
 

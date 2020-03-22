@@ -14,7 +14,7 @@ import { UserModule } from '../user/user.module';
   imports: [
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.register({
-      secret: "We are the priests of the temples of syrinx our great computers fill the hallowed halls",
+      secret: process.env.JWT_SECRET || "We are the priests of the temples of syrinx our great computers fill the hallowed halls",
       signOptions: {
         expiresIn: 3600
       }

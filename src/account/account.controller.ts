@@ -3,7 +3,10 @@ import { AuthGuard } from "@nestjs/passport";
 import { AccountService } from "./account.service";
 import VoiceResponse = require("twilio/lib/twiml/VoiceResponse");
 import { UpdateAccountDto } from "./dto/update-account.dto";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
+@ApiBearerAuth()
+@ApiTags('Account')
 @UseGuards(AuthGuard())
 @Controller("account")
 export class AccountController {

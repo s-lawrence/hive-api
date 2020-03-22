@@ -1,19 +1,23 @@
 import { IsString, MaxLength, Matches } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class ProjectDto {
-
+  @ApiProperty()
   @MaxLength(80)
   @IsString()
   title: string;
 
+  @ApiProperty()
   @MaxLength(300)
   @IsString()
   description: string;
 
+  @ApiProperty({ description: " Value may be 'paid', 'volunteer' or 'invest" })
   @MaxLength(20)
   @IsString()
   @Matches(/\b(paid|volunteer|invest)\b/)
   projectType: string;
 
+  @ApiProperty()
   interests: string[];
 }
