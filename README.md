@@ -9,10 +9,13 @@
   The types of projects that can be posted is only limited by the requirements that they meet with our predefined user agreement.
   Projects can be for profit, non-profit, private enterprise or community and social networking.
   Users of the app will be presented projects that match their skills and interests.
-  <br>
+  <br />
   Our App will be the perfect place for people to find work, gain experience, develop skills and allow them to make meaningful contributions to community and society!
-  <br>
+  <br />
+  <br />
   <strong>"Connecting projects and people that have a passion for them!"</strong>
+  <br /><br />
+  Visit http://hivewebapi-env.eba-t2qg9pem.ca-central-1.elasticbeanstalk.com/api for API documentation and usage.
 </p>
 
 ## Installation
