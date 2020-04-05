@@ -1,9 +1,9 @@
 import { Controller, UseGuards, Get, Param, Patch, Body, ValidationPipe } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AccountService } from "./account.service";
-import VoiceResponse = require("twilio/lib/twiml/VoiceResponse");
 import { UpdateAccountDto } from "./dto/update-account.dto";
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { Account } from "./account.entity";
 
 @ApiBearerAuth()
 @ApiTags('Account')
@@ -21,7 +21,7 @@ export class AccountController {
   updateAccount(
     @Param("id") id: string, 
     @Body(ValidationPipe) updateAccountDto: UpdateAccountDto
-  ) {
+  ): Promise<Account> {
     return this.accountService.updateAccount(id, updateAccountDto);
   }
 

@@ -77,7 +77,7 @@ export class User extends BaseEntity {
 
   @OneToMany(
     type => Project,
-    project => project.user,
+    project => project.owner,
     {nullable: true}
   )
   ownedProjects: Project[];

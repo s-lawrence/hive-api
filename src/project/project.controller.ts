@@ -7,8 +7,11 @@ import {
   Param,
   Get,
   Patch,
-  Delete
+  Delete,
+  UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { ProjectDto } from "./dto/project.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { ProjectService } from "./project.service";
@@ -24,12 +27,19 @@ import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
+  @Get()
+  getProjects(): Promise<Project[]> {
+    return this.projectService.getProjects();
+  }
+
   @Post("/create/:userId")
+  @UseInterceptors(FileInterceptor("media"))
   createProject(
     @Param("userId") userId: string,
-    @Body(ValidationPipe) projectDto: ProjectDto
+    @Body(ValidationPipe) projectDto: ProjectDto,
+    @UploadedFile() media
   ): Promise<Project> {
-    return this.projectService.createProject(userId, projectDto);
+    return this.projectService.createProject(userId, projectDto, media);
   }
 
   @Get("/:id")

@@ -19,7 +19,7 @@ import { Education } from "./education/education.entity";
 import { UpdateEducationDto } from "./education/dto/update-education.dto";
 import { Experience } from "./experience/experience.entity";
 import { CreateExperienceDto } from "./experience/dto/create-experience.dto";
-import { Interest } from "src/interest/interest.entity";
+import { Interest } from "../interest/interest.entity";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -137,31 +137,59 @@ export class UserRepository extends Repository<User> {
   }
 
   async addUserInterests(userId: string, interests: string[]) {
-    return await this.findOne({ id: userId }).then(async user => {
-      for (let interest of interests) {
-        const existing = await getRepository(Interest).findOne(interest);
-        if (existing) {
-          user.interests = user.interests
-            ? [...user.interests, existing]
-            : [existing];
-        } else {
-          const newInterest = new Interest();
-          newInterest.name = interest.toLowerCase();
-          user.interests = user.interests
-            ? [...user.interests, newInterest]
-            : [newInterest];
+    return await this.createQueryBuilder("user")
+      .where("user.id = :userId", { userId })
+      .leftJoinAndSelect("user.interests", "interest")
+      .getOne()
+      .then(async user => {
+        // Loop through interests array creating/adding interests to user
+        for (let interest of interests) {
+          const existing = await getRepository(Interest).findOne(interest);
+          if (existing) {
+            const userHas =
+              user.interests.filter(int => int.name === interest).length > 0;
+            if (!userHas) {
+              user.interests = user.interests
+                ? [...user.interests, existing]
+                : [existing];
+            }
+          } else {
+            const newInterest = new Interest();
+            newInterest.name = interest.toLowerCase().trim();
+            user.interests = user.interests
+              ? [...user.interests, newInterest]
+              : [newInterest];
+          }
         }
-      }
-      try {
-        user.save();
-        return user;
-      } catch (error) {
-        console.log(error);
-        throw new InternalServerErrorException(
-          "This was an error adding the interests to the user: " + error
-        );
-      }
-    });
+        try {
+          return await user.save();
+        } catch (error) {
+          console.log(error);
+          throw new InternalServerErrorException(
+            "This was an error adding the interests to the user: " + error
+          );
+        }
+      });
+  }
+
+  deleteUserInterestById(userId: string, interest: string): Promise<User> {
+    return this.createQueryBuilder("user")
+      .where("user.id = :userId", { userId })
+      .leftJoinAndSelect("user.interests", "interest")
+      .getOne()
+      .then(async user => {
+        user.interests = [
+          ...user.interests.filter(int => int.name !== interest)
+        ];
+        try {
+          return await user.save();
+        } catch (error) {
+          console.log(error);
+          throw new InternalServerErrorException(
+            "There was an error deleting the interest: " + error
+          );
+        }
+      });
   }
 
   async validateUserPassword(
@@ -174,7 +202,7 @@ export class UserRepository extends Repository<User> {
       .addSelect("user.password")
       .addSelect("user.salt")
       .getOne();
-    if (user && await user.validatePassword(password)) {
+    if (user && (await user.validatePassword(password))) {
       return {
         email: user.email,
         accountId: user.accountId

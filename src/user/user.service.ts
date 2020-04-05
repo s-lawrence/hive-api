@@ -144,6 +144,16 @@ export class UserService {
     return this.userRepository.addUserInterests(userId, interests);
   }
 
+  deleteUserInterestById(
+    userId: string,
+    interestId: string
+  ): Promise<User> {
+    return this.userRepository.deleteUserInterestById(
+      userId,
+      interestId,
+    );
+  }
+
   async validateUserPassword(authCredentialDto: AuthCredentialsDto) {
     return await this.userRepository.validateUserPassword(authCredentialDto);
   }

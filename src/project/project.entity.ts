@@ -22,9 +22,7 @@ export class Project extends BaseEntity {
     user => user.projects
   )
   @JoinColumn()
-  user: User;
-  @Column()
-  userId: string;
+  owner: User;
 
   @ManyToMany(type => User, { cascade: true })
   users: User[];

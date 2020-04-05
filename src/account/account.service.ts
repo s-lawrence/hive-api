@@ -24,7 +24,10 @@ export class AccountService {
     this.accountRepository.delete({ id });
   }
 
-  async updateAccount(id: string, updateAccountDto: UpdateAccountDto) {
-    this.accountRepository.updateAccount(id, updateAccountDto);
+  async updateAccount(
+    id: string,
+    updateAccountDto: UpdateAccountDto
+  ): Promise<Account> {
+    return this.accountRepository.updateAccount(id, updateAccountDto);
   }
 }

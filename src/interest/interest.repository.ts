@@ -9,14 +9,14 @@ export class InterestRepository extends Repository<Interest> {
 
   async createInterest(createInterestDto: CreateInterestDto): Promise<Interest> {
     const { name } = createInterestDto;
-    await this.findOne({ name: name.toLowerCase() }) 
+    await this.findOne({ name: name.toLowerCase().trim() }) 
       .then(confict => {
         if(confict) {
           throw new ConflictException("That interest already exists.")
         }
       })
     const interest = new Interest();
-    interest.name = name.toLowerCase();
+    interest.name = name.toLowerCase().trim();
     try {
       await interest.save();
       return interest;

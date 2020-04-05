@@ -142,7 +142,18 @@ export class UserController {
   addUserInterests(
     @Param("userId") userId: string,
     @Body(ValidationPipe) interests: string[]
-  ) {
+  ):Promise<User> {
     return this.userService.addUserInterests(userId, interests);
+  }
+
+  @Patch("/:userId/interest/:interestId")
+  deleteUserInterestById(
+    @Param("userId") userId: string,
+    @Param("interestId") interestId: string
+  ): Promise<User> {
+    return this.userService.deleteUserInterestById(
+      userId,
+      interestId,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { IsString, MaxLength, Matches } from "class-validator";
+import { IsString, MaxLength, Matches, IsOptional } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ProjectDto {
@@ -20,4 +20,5 @@ export class ProjectDto {
 
   @ApiProperty()
   interests: string[];
+
 }
