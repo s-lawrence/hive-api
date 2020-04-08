@@ -21,4 +21,7 @@ export class ProjectDto {
   @ApiProperty()
   interests: string[];
 
+  @IsOptional()
+  media: any;
+
 }

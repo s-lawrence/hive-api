@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from "@nestjs/common";
+import s3Storage = require("multer-s3");
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ProjectDto } from "./dto/project.dto";
 import { AuthGuard } from "@nestjs/passport";
@@ -19,9 +20,10 @@ import { Project } from "./project.entity";
 import { UpdateProjectDto } from "./dto/update-project-dto";
 import { DeleteResult } from "typeorm";
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { S3 } from "aws-sdk";
 
 @ApiBearerAuth()
-@ApiTags('Project')
+@ApiTags("Project")
 @UseGuards(AuthGuard())
 @Controller("project")
 export class ProjectController {
@@ -33,7 +35,21 @@ export class ProjectController {
   }
 
   @Post("/create/:userId")
-  @UseInterceptors(FileInterceptor("media"))
+  @UseInterceptors(
+    FileInterceptor("media", {
+      storage: s3Storage({
+        s3: new S3(),
+        bucket: "hive.media.storage/media",
+        acl: "public-read",
+        key: function(req, file, cb) {
+          cb(null, Date.now() + file.originalname); //use Date.now() for unique file keys
+        },
+        contentType: function (req, file, cb) {
+          cb(null, file.mimetype); //use Date.now() for unique file keys
+          },
+      }),
+    })
+  )
   createProject(
     @Param("userId") userId: string,
     @Body(ValidationPipe) projectDto: ProjectDto,

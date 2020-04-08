@@ -4,13 +4,11 @@ import { ProjectService } from './project.service';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectRepository } from './project.repository';
-import { MediaModule } from 'src/media/media.module';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: "jwt" }),
     TypeOrmModule.forFeature([ProjectRepository]),
-    MediaModule
   ],
   controllers: [ProjectController],
   providers: [ProjectService]
