@@ -2,7 +2,6 @@ import { Matches, IsOptional } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateProjectDto {
-
   @ApiProperty()
   title?: string;
   @ApiProperty()
@@ -12,7 +11,7 @@ export class UpdateProjectDto {
   @Matches(/\b(paid|volunteer|invest)\b/)
   projectType?: string;
   @ApiProperty()
-  interests?: string[];
+  interestsString?: string;
   @ApiProperty()
   completed: boolean;
 }

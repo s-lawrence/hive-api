@@ -9,6 +9,10 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+/**
+ * Configuration class for authorization using Passport package.
+ * @requires UserRepository
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -20,13 +24,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET || "We are the priests of the temples of syrinx our great computers fill the hallowed halls"
     });
   }
-
-  async validate(payload: JwtPayload): Promise<User> {
-    const { email } = payload;
-    const user = await this.userRepository.findOne({ email });
-    if(!user) {
-      throw new UnauthorizedException();
-    }
-    return user;
-  }
+  
+  // async validate(payload: JwtPayload): Promise<User> {
+  //   const { email } = payload;
+  //   const user = await this.userRepository.findOne({ email });
+  //   if(!user) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   return user;
+  // }
 }

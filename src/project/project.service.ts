@@ -17,7 +17,12 @@ export class ProjectService {
   ) {}
 
   getProjects(): Promise<Project[]> {
-    return this.projectRepository.find();
+    return this.projectRepository
+      .createQueryBuilder("project")
+      .leftJoinAndSelect("project.interests", "interest")
+      .leftJoinAndSelect("project.owner", "user")
+      .getMany();
+
   }
 
   async createProject(
@@ -39,6 +44,7 @@ export class ProjectService {
     return await this.projectRepository
       .createQueryBuilder("project")
       .leftJoinAndSelect("project.interests", "interest")
+      .leftJoinAndSelect("project.owner", "user")
       .where("project.id = :id", { id })
       .getOne();
   }

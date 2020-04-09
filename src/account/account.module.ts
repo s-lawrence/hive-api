@@ -5,6 +5,11 @@ import { AccountRepository } from './account.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 
+/**
+ * Account module, dependencies and exports are declared here
+ * @requires PassportModule
+ * @requires TypeOrmModule
+ */
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: "jwt" }),

@@ -3,6 +3,9 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+/**
+ * Database configuration required by TypeOrm
+ */
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   host: process.env.RDS_HOSTNAME || 'localhost',

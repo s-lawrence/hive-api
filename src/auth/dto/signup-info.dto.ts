@@ -8,7 +8,19 @@ import {
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
+/**
+ * Data transfer object for signing up.
+ * Validates and restricts data sent to server.
+ * @property email
+ * @property password
+ * @property firstname
+ * @property lastname
+ */
 export class SignupInfoDto {
+
+  /**
+   * Must be valid and unique email
+   */
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()

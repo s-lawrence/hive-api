@@ -4,14 +4,21 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn
 } from "typeorm";
 import { User } from "../user/user.entity";
 
+/**
+ * Account Entity class, outlines the attributes and relationships,
+ * for the Account table in the database.
+ */
 @Entity()
 export class Account extends BaseEntity {
+  
+  /**
+   * Primary key
+   */
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -21,12 +28,25 @@ export class Account extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: string;
 
+  /**
+   * Used to track account onboarding, indicates first
+   * time an account logs in. Updates ones account has 
+   * completed onboarding.
+   */
   @Column()
   isFirstTime: boolean;
 
+  /**
+   * Tracks account status.
+   */
   @Column()
   enabled: boolean;
 
+  /**
+   * One to one relationship with User. Cascades updates down
+   * to User, and deletes User upon deletion. This is a compostion 
+   * association between account and User. Account owns user.
+   */
   @OneToOne(
     type => User,
     user => user.account,

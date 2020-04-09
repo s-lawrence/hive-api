@@ -8,7 +8,7 @@ export class ProjectDto {
   title: string;
 
   @ApiProperty()
-  @MaxLength(300)
+  @MaxLength(1000)
   @IsString()
   description: string;
 
@@ -19,7 +19,7 @@ export class ProjectDto {
   projectType: string;
 
   @ApiProperty()
-  interests: string[];
+  interestsString: string;
 
   @IsOptional()
   media: any;

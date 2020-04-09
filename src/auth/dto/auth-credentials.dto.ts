@@ -1,6 +1,13 @@
 import { IsString, MinLength, MaxLength, Matches } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
+/**
+ * Data transfer object for signing in.
+ * Validates and restricts data sent to server.
+ * 
+ * @property email
+ * @property password
+ */
 export class AuthCredentialsDto {
   @ApiProperty()
   @IsString()

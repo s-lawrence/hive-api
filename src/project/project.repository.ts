@@ -16,31 +16,36 @@ export class ProjectRepository extends Repository<Project> {
     projectDto: ProjectDto,
     mediaUrl: string
   ): Promise<Project> {
-    const { title, description, projectType, interests } = projectDto;
+    const { title, description, projectType, interestsString } = projectDto;
     const project = new Project();
     project.title = title;
     project.description = description;
     project.projectType = projectType;
     project.mediaUrl = mediaUrl;
+    let interests = interestsString.split("#");
     const owner = await getRepository(User).findOne({ id: userId });
     project.owner = owner;
     for (let interest of interests) {
-      const existing = await getRepository(Interest).findOne(interest);
-      if (existing) {
-        const addToProject = project.interests
-          ? project.interests.filter(int => int.name === interest).length === 0
-          : true;
-        if (addToProject) {
+      interest = interest.trim().toLowerCase();
+      if (interest !== "") {
+        const existing = await getRepository(Interest).findOne(interest);
+        if (existing) {
+          const addToProject = project.interests
+            ? project.interests.filter((int) => int.name === interest)
+                .length === 0
+            : true;
+          if (addToProject) {
+            project.interests = project.interests
+              ? [...project.interests, existing]
+              : [existing];
+          }
+        } else {
+          const newInterest = new Interest();
+          newInterest.name = interest;
           project.interests = project.interests
-            ? [...project.interests, existing]
-            : [existing];
+            ? [...project.interests, newInterest]
+            : [newInterest];
         }
-      } else {
-        const newInterest = new Interest();
-        newInterest.name = interest.toLowerCase().trim();
-        project.interests = project.interests
-          ? [...project.interests, newInterest]
-          : [newInterest];
       }
     }
     try {
@@ -59,10 +64,13 @@ export class ProjectRepository extends Repository<Project> {
     updateProjectDto: UpdateProjectDto
   ): Promise<Project> {
     return await this.createQueryBuilder("project")
-      .where("id = :id")
-      .andWhere("owner.id = :userId")
+      .where("project.id = :id", { id })
+      .leftJoinAndSelect("project.owner", "user")
       .getOne()
-      .then(async project => {
+      .then(async (project) => {
+        if(project.owner.id !== userId) {
+          throw new UnauthorizedException();
+        }
         for (let [key, value] of Object.entries(updateProjectDto)) {
           if (key === "id") {
             throw new UnauthorizedException();
@@ -70,19 +78,25 @@ export class ProjectRepository extends Repository<Project> {
           if (key === "completed" && (value === true || value === "true")) {
             project.completionDate = new Date();
           }
-          if (key === "interests") {
-            for (let interest of value) {
-              const existing = await getRepository(Interest).findOne(interest);
-              if (existing) {
-                project.interests = project.interests
-                  ? [...project.interests, existing]
-                  : [existing];
-              } else {
-                const newInterest = new Interest();
-                newInterest.name = interest.toLowerCase().trim();
-                project.interests = project.interests
-                  ? [...project.interests, newInterest]
-                  : [newInterest];
+          if (key === "interestsString") {
+            let interests = value.split("#");
+            for (let interest of interests) {
+              interest = interest.trim().toLowerCase();
+              if (interest !== "") {
+                const existing = await getRepository(Interest).findOne(
+                  interest
+                );
+                if (existing) {
+                  project.interests = project.interests
+                    ? [...project.interests, existing]
+                    : [existing];
+                } else {
+                  const newInterest = new Interest();
+                  newInterest.name = interest;
+                  project.interests = project.interests
+                    ? [...project.interests, newInterest]
+                    : [newInterest];
+                }
               }
             }
           } else {
